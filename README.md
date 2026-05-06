@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Users Dashboard 
 
-## Getting Started
+## Стильный, быстрый и отзывчивый дашборд пользователей. Pick your user, like a pokemon! 
 
-First, run the development server:
+## 🛠️ Стек технологий
+* **Фреймворк:** Next.js (App Router, Server Components)
+* **Стилизация:** Tailwind CSS
+* **Анимации:** Framer Motion
+* **Стейт-менеджмент:** Zustand
+* **Иконки:** Lucide React
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🤔 Архитектурные решения (Почему сделано именно так)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+При проектировании интерфейса я решил уйти от скучных "админских" таблиц в пользу современных карточек (CSS Grid). Это обеспечивает идеальный адаптив и улучшает UX.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**1. SSR фетчинг данных (Next.js App Router)**
+Основная страница `page.tsx` является серверным компонентом. Данные из `dummyjson` загружаются на сервере (SSR) до рендера интерфейса. Это гарантирует отсутствие "миганий" при загрузке, отличный показатель FCP (First Contentful Paint) и готовность к SEO. 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**2. Управление состоянием поиска через URL**
+Поиск реализован через параметры строки запроса (`?q=name`) с помощью `useSearchParams`. 
+*Почему:* В отличие от локального `useState`, хранение стейта в URL делает интерфейс предсказуемым. Пользователь может обновить страницу или поделиться ссылкой с коллегой, не потеряв результаты фильтрации.
 
-## Learn More
+**3. Локальное хранилище для Избранного (Zustand Persist)**
+Я добавил механику "лайков" и фильтрацию по избранным пользователям. Для хранения ID лайкнутых пользователей используется Zustand с middleware `persist` (запись в `localStorage`). 
+*Почему:* Это позволяет сохранить выбор пользователя даже после закрытия вкладки. Чтобы избежать ошибок гидратации (Hydration Mismatch) между сервером и клиентом, рендер избранного и кнопок отложен до стадии `useEffect` (isMounted).
 
-To learn more about Next.js, take a look at the following resources:
+**4. Плавные анимации (Framer Motion)**
+Вместо резкого появления данных используется каскадная пружинная анимация (`staggering`). Компонент сетки обернут в `AnimatePresence` с `layout`-переходами, поэтому при переключении табов "All Users / Favorites" карточки не исчезают, а плавно перестраиваются на новые места.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**5. Производительность UI**
+Сложные градиентные обводки и hover-эффекты карточек реализованы силами утилитарных классов Tailwind CSS без написания тяжелых кастомных стилей. Компонент поиска изолирован директивой `"use client"`, чтобы не мешать серверному рендерингу основного лэйаута.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛜 Как запустить проект
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Клонируйте репозиторий: `git clone <ваш-url>`
+2. Установите зависимости: `npm install`
+3. Запустите dev-сервер: `npm run dev`
+4. Откройте `http://localhost:3000`

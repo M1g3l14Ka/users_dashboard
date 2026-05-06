@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Users Dashboard",
-  description: "Pick your user, like a pokemon!",
+  description: "Pick users, like a pokemons!",
 };
 
 export default function RootLayout({
